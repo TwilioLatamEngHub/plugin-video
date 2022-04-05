@@ -13,7 +13,6 @@ export default (options? : ConnectOptions) => {
         setIsConnecting(true)
         return Video.connect(token, {...optionsRef.current})
             .then( newRoom => {
-                console.log(newRoom, 'new Room')
                 setRoom(newRoom)
                 const disconnect = () => newRoom.disconnect()
                 newRoom.once('disconnected', () => {

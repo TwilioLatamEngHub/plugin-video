@@ -51,7 +51,7 @@ export default function AppStateProvider(props: PropsWithChildren<any>) {
 export function useAppState() {
     const context = useContext(StateContext)
     if (!context) {
-        console.log('EROOOOOOOOOOU')
+        return null
     }
     return context
 }
