@@ -23,11 +23,11 @@ Finally, install the [Flex Plugin extension](https://github.com/twilio-labs/plug
 twilio plugins:install @twilio-labs/plugin-flex
 ```
    
-**Configure your Flex Workspace**
+### Configure your Flex Workspace
 
 In order to use this plugin, you need to prepare your **Flex TAsk Assignment** workspace.
 
-**Retrieve your Flex settings**
+### Retrieve your Flex settings
 
 Navigate to your Flex project in the [Twilio Console](https://www.twilio.com/console). Copy your **Account Sid** and **Auth Token**, and create a new Twilio CLI profile using those credentials and activate it.
 
