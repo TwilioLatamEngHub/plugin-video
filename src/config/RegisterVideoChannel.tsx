@@ -1,6 +1,6 @@
 import React from 'react';
 import * as Flex from '@twilio/flex-ui';
-import IncomingVideoComponent from '../IncommingVideo';
+import IncomingVideoComponent from '../components/IncommingVideo';
 import AppStateProvider from '../states/AppStateProvider';
 
 const RegisterVideoChannel = (flex: typeof Flex, manager: Flex.Manager ) => {

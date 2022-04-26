@@ -1,10 +1,10 @@
 import {Manager, TaskContextProps, TaskTaskStatus, withTaskContext } from "@twilio/flex-ui";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { AudioTrack, LocalAudioTrack, LocalTrackPublication, LocalVideoTrack, RemoteParticipant, RemoteTrackPublication, Room, VideoTrack } from 'twilio-video';
-import { useAppState } from "./states/AppStateProvider";
-import useRoom from "./hooks/useRoom";
-import Video from "./components/Video";
-import useBackground from "./hooks/useBackground";
+import { useAppState } from "../states/AppStateProvider";
+import useRoom from "../hooks/useRoom";
+import Video from "./Video";
+import useBackground from "../hooks/useBackground";
 
 interface IncomingVideoProps extends TaskContextProps {
     manager: Manager
@@ -129,7 +129,6 @@ const IncomingVideo:React.FC<IncomingVideoProps> = ({task, manager }: IncomingVi
 
         
         if (process.env.REACT_APP_WITH_BG && tracksWithBG.length) {
-            console.log(tracksWithBG, '>>>>>>>>>>')
             attachLocalTracks(tracksWithBG, mediaRef.current)
         }
         return () => {
