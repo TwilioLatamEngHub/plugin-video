@@ -18,7 +18,7 @@ export default function AppStateProvider(props: PropsWithChildren<any>) {
     contextValue = {
         ...contextValue,
         getToken: async (identity: string, name: string) => {
-            const url = prepServiceBaseUrl('video-app-test-liq-6888.twil.io')
+            const url = prepServiceBaseUrl(process.env.REACT_APP_FUNCTIONS_URL)
 
             return axios.post(url + 'flexvideotokenizer', {
                 identity,

@@ -1,9 +1,10 @@
 import {Manager, TaskContextProps, TaskTaskStatus, withTaskContext } from "@twilio/flex-ui";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { AudioTrack, LocalAudioTrack, LocalTrackPublication, LocalVideoTrack, RemoteParticipant, RemoteTrackPublication, Room, VideoTrack } from 'twilio-video';
-import { useAppState } from "./states/AppStateProvider";
-import useRoom from "./hooks/useRoom";
-import Video from "./components/Video";
+import { useAppState } from "../states/AppStateProvider";
+import useRoom from "../hooks/useRoom";
+import Video from "./Video";
+import useBackground from "../hooks/useBackground";
 
 interface IncomingVideoProps extends TaskContextProps {
     manager: Manager
@@ -28,6 +29,8 @@ const IncomingVideo:React.FC<IncomingVideoProps> = ({task, manager }: IncomingVi
     const [localVideo, setLocalVideo] = useState<LocalVideoTrack>(null);
     const [screenTrack, setScreenTrack] = useState<MediaStreamTrack | null>(null);
     const [isScreenSharing, setIsScreenSharing] = useState<boolean>(null);
+    const [localTracks, setLocalTracks] = useState<LocalTrackPublication[]>([])
+    const { tracks: tracksWithBG } = useBackground(localTracks, process.env.BACKGROUND_URL)
     const mediaRef = useRef(null);
     
 
@@ -43,7 +46,22 @@ const IncomingVideo:React.FC<IncomingVideoProps> = ({task, manager }: IncomingVi
     const disconnect = useCallback(() => {
         activeRoom && activeRoom.disconnect();
         setActiveRoom(null)
+        setLocalTracks([])
     }, [activeRoom])
+
+    const attachLocalTracks = useCallback((tracks: LocalTrackPublication[], container) => {
+        setLocalTracks(tracks)
+        for (const track of tracks) {
+            let trackDom = null;
+            if (track.kind == 'audio') {
+                trackDom = track as AudioTrackProps;
+            } else if (track.kind == 'video') {
+                trackDom = track as VideoTrackProps
+            }
+            trackDom = trackDom.track.attach()
+            container.appendChild(trackDom)
+        }
+    }, [])
 
     const roomJoined = useCallback((room: Room) => {
         setActiveRoom(room)
@@ -88,7 +106,7 @@ const IncomingVideo:React.FC<IncomingVideoProps> = ({task, manager }: IncomingVi
             console.log('Left');
         });
         
-    }, [attachParticipantTracks])
+    }, [attachParticipantTracks, attachLocalTracks])
 
     useEffect(() => {
         const taskStatusProps = task.taskStatus;
@@ -109,31 +127,25 @@ const IncomingVideo:React.FC<IncomingVideoProps> = ({task, manager }: IncomingVi
             disconnect()
         }
 
+        
+        if (process.env.REACT_APP_WITH_BG && tracksWithBG.length) {
+            attachLocalTracks(tracksWithBG, mediaRef.current)
+        }
         return () => {
             const taskStatusProps = task.taskStatus;
             if (disconnectedStatus.includes(taskStatusProps)) {
                 disconnect()
             }
         }
+        
     }, [task])
 
-    const attachLocalTracks = (tracks: LocalTrackPublication[], container) => {
-        for (const track of tracks) {
-            let trackDom = null;
-            if (track.kind == 'audio') {
-                trackDom = track as AudioTrackProps;
-            } else if (track.kind == 'video') {
-                trackDom = track as VideoTrackProps
-            }
-            trackDom = trackDom.track.attach()
-            container.appendChild(trackDom)
-        }
-    }
 
     const attachTracks = (tracks, container) => {
         tracks.forEach(function(track) {
             const trackDom = track.attach();
             trackDom.style.width = "100%";
+
             container.appendChild(trackDom);
         });
         

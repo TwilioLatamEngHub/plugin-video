@@ -1,17 +1,21 @@
 {
   "name": "plugin-video",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "private": true,
   "scripts": {
     "postinstall": "flex-plugin pre-script-check"
   },
   "dependencies": {
     "@twilio/flex-plugin-scripts": "5.0.2",
+    "@twilio/video-processors": "^1.0.2",
     "axios": "^0.26.1",
+    "express": "^4.17.3",
     "is-plain-object": "^5.0.0",
     "react": "16.8.0",
     "react-dom": "16.8.0",
     "react-emotion": "9.2.12",
+    "serve-static": "^1.15.0",
+    "server-static": "^2.0.5",
     "twilio-video": "^2.20.1"
   },
   "devDependencies": {
