@@ -30,7 +30,7 @@ const IncomingVideo:React.FC<IncomingVideoProps> = ({task, manager }: IncomingVi
     const [screenTrack, setScreenTrack] = useState<MediaStreamTrack | null>(null);
     const [isScreenSharing, setIsScreenSharing] = useState<boolean>(null);
     const [localTracks, setLocalTracks] = useState<LocalTrackPublication[]>([])
-    const { tracks: tracksWithBG } = useBackground(localTracks)
+    const { tracks: tracksWithBG } = useBackground(localTracks, process.env.BACKGROUND_URL)
     const mediaRef = useRef(null);
     
 

@@ -25,7 +25,6 @@ type EventType = {
 type ContextType = {
     TWILIO_WORKSPACE_SID: string
     TWILIO_VIDEO_WORKFLOW_SID: string
-    TWILIO_SYNC_SERVICE_SID: string
 }
 
 interface ITaskAttr {
@@ -49,28 +48,6 @@ function createTask(client:twilio.Twilio, workspace: string, workflow: string, t
     })
 }
   
-function createSyncDoc(client:twilio.Twilio, syncService: string, roomName: string, taskSid: string, phoneNumber: string) {
-    return new Promise((resolve, reject) => {
-        client.sync.services(syncService)
-            .documents
-            .create({
-                data: {
-                    taskSid: taskSid,
-                    phoneNumber: phoneNumber
-                },
-                ttl: 3600,
-                    uniqueName: roomName
-                })
-        .then(document => {
-            resolve(document);
-        })
-        .catch(error => {
-            console.log(error)
-            reject(error)
-        })
-    })
-}
-  
 export const handler: ServerlessFunctionSignature<ContextType, EventType> = function(
     context: Context<ContextType>,
     event: EventType,
@@ -79,7 +56,6 @@ export const handler: ServerlessFunctionSignature<ContextType, EventType> = func
   
     const workspace = context.TWILIO_WORKSPACE_SID;
     const workflow = context.TWILIO_VIDEO_WORKFLOW_SID;
-    const syncService = context.TWILIO_SYNC_SERVICE_SID;
     const { roomName, customerName, phoneNumber, worker } = event;
   
     const client: twilio.Twilio = context.getTwilioClient();
@@ -99,10 +75,8 @@ export const handler: ServerlessFunctionSignature<ContextType, EventType> = func
     })
     .then(newTask => {
         const task = newTask as TaskInstance
-        createSyncDoc(client, syncService, roomName, task.sid, event.phoneNumber).then(() => {
-            response.setBody(task.sid);
-            callback(null, response);
-        })
+        response.setBody(task.sid);
+        callback(null, response);
     })
     .catch((error) => {
         console.log(error)
